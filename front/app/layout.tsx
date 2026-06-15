@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Navbar } from "./components/Navbar";
+import Navbar from "@/app/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Kata Libe",
@@ -16,7 +16,8 @@ export default function RootLayout({
     <html
       lang="fr"
     >
-      <body >
+      <body className="flex flex-col h-screen">
+        <Navbar />
         {children}
       </body>
     </html>
