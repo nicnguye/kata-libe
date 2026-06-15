@@ -43,7 +43,7 @@ model Subscription {
   userId    String
   offerId   String
   status    SubscriptionStatus
-  createdAt DateTime
+  createdAt DateTime   @default(now())
   endedAt   DateTime?
 
   user      User       @relation(fields: [userId], references: [id])

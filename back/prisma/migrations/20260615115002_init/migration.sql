@@ -34,7 +34,7 @@ CREATE TABLE "Subscription" (
     "userId" TEXT NOT NULL,
     "offerId" TEXT NOT NULL,
     "status" "SubscriptionStatus" NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "endedAt" TIMESTAMP(3),
 
     CONSTRAINT "Subscription_pkey" PRIMARY KEY ("id")

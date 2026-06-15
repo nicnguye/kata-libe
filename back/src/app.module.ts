@@ -5,8 +5,10 @@ import { HttpModule } from '@nestjs/axios';
 import { PrismaModule } from './prisma/prisma.module';
 import { OffersModule } from './offers/offers.module';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { UsersModule } from './users/users.module';
     PrismaModule,
     OffersModule,
     UsersModule,
+    SubscriptionsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
