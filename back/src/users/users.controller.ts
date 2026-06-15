@@ -9,6 +9,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
+import * as bcrypt from 'bcrypt';
 import { User } from 'generated/prisma/client';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -26,8 +27,13 @@ export class UsersController {
     if (user) {
       throw new HttpException('User email already exists', HttpStatus.CONFLICT);
     }
-
-    return this.usersService.create(createUserDto);
+    const saltOrRounds = 10;
+    const hashPassword = await bcrypt.hash(
+      createUserDto.password,
+      saltOrRounds,
+    );
+    const createUserData = { ...createUserDto, password: hashPassword };
+    return this.usersService.create(createUserData);
   }
 
   @Get()

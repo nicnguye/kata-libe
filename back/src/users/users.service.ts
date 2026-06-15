@@ -18,6 +18,14 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
+  getUserProfile(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      omit: { password: true },
+      include: { subscription: { include: { offer: true } } }, // Get user with subscription and offer data
+    });
+  }
+
   findOneBy(where: Prisma.UserWhereUniqueInput) {
     return this.prisma.user.findUnique({ where });
   }
