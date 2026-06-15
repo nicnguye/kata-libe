@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
+import { PrismaModule } from './prisma/prisma.module';
+import { OffersModule } from './offers/offers.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -12,6 +14,8 @@ import { AppService } from './app.service';
     }),
     TerminusModule,
     HttpModule,
+    PrismaModule,
+    OffersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
