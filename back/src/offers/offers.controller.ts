@@ -6,7 +6,9 @@ import {
   Patch,
   Param,
   Delete,
+  HttpException,
 } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common/enums';
 import { Offer } from 'generated/prisma/client';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
@@ -22,22 +24,38 @@ export class OffersController {
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Offer[]> {
     return this.offersService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.offersService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<Offer> {
+    const offer = await this.offersService.findOne(id);
+    if (!offer) {
+      throw new HttpException('Offer not found', HttpStatus.NOT_FOUND);
+    }
+    return offer;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOfferDto: UpdateOfferDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateOfferDto: UpdateOfferDto,
+  ) {
+    const offer = await this.offersService.findOne(id);
+    if (!offer) {
+      throw new HttpException('Offer not found', HttpStatus.NOT_FOUND);
+    }
     return this.offersService.update(id, updateOfferDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
+    const offer = await this.offersService.findOne(id);
+    if (!offer) {
+      throw new HttpException('Offer not found', HttpStatus.NOT_FOUND);
+    }
+
     return this.offersService.remove(id);
   }
 }
