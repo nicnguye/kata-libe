@@ -21,3 +21,9 @@ export async function userLogin(formData: FormData): Promise<LoginResponse> {
 
   redirect("/");
 }
+
+export async function logout() {
+  const cookiesStore = await cookies();
+  cookiesStore.delete("accessToken");
+  redirect("/");
+}

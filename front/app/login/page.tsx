@@ -1,4 +1,5 @@
 import Form from "next/form";
+import Link from "next/link";
 import { userLogin } from "./actions";
 
 export default function Page() {
@@ -33,15 +34,13 @@ export default function Page() {
             </div>
 
             <div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="flex gap-0.5 text-sm font-medium text-sky-800"
-                >
-                  <p>Mot de passe</p>
-                  <p className="text-red-600">*</p>
-                </label>
-              </div>
+              <label
+                htmlFor="password"
+                className="flex gap-0.5 text-sm font-medium text-sky-800"
+              >
+                <p>Mot de passe</p>
+                <p className="text-red-600">*</p>
+              </label>
               <div className="mt-2">
                 <input
                   id="password"
@@ -66,12 +65,12 @@ export default function Page() {
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Pas encore membre?{" "}
-            <a
-              href="#"
+            <Link
+              href="/register"
               className="font-semibold text-sky-800 hover:text-sky-800"
             >
               Inscrivez-vous
-            </a>
+            </Link>
           </p>
         </div>
       </div>
