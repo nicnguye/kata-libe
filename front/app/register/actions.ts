@@ -6,34 +6,42 @@ import { createUser, UserData } from "@/lib/api";
 import { registerSchema } from "@/lib/validators/register";
 import { z } from "zod";
 
-export async function register(formData: FormData): Promise<UserData> {
-  const firstName = formData.get("firstName");
-  const lastName = formData.get("lastName");
-  const gender = formData.get("gender");
-  const age = formData.get("age");
-  const email = formData.get("email");
-  const password = formData.get("password");
+type State = {
+  errors?: {
+    firstName?: string[];
+    lastName?: string[];
+    gender?: string[];
+    age?: string[];
+    email?: string[];
+    password?: string[];
+  };
+  success?: boolean;
+};
 
-  const validation = registerSchema.safeParse({
+export async function register(prevState: State, formData: FormData): Promise<State> {
+  const firstName = formData.get("firstName") as string;
+  const lastName = formData.get("lastName") as string;
+  const gender = formData.get("gender") as string;
+  const age = formData.get("age") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  const data = {
     firstName,
     lastName,
     gender,
-    age: parseInt(age as string),
+    age: parseInt(age),
     email,
     password,
-  });
+  };
+
+  const validation = registerSchema.safeParse(data);
   if (!validation.success) {
     return { errors: z.flattenError(validation.error).fieldErrors };
   }
 
-  //   const response = await createUser({ email, password });
-  //   const cookiesStore = await cookies();
-  //   cookiesStore.set("accessToken", response.accessToken, {
-  //     httpOnly: true,
-  //     secure: true,
-  //   });
-
-  redirect("/");
+    await createUser(data);
+    return { success: true };
 }
 
 export async function logout() {

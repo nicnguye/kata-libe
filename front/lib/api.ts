@@ -20,6 +20,8 @@ type UserLoginData = {
 type UserData = {
   firstName: string;
   lastName: string;
+  gender: string;
+  age: number;
   email: string;
   password: string;
 };
@@ -66,6 +68,9 @@ export async function login(userLoginData: UserLoginData): Promise<LoginResponse
 export async function createUser(userData: UserData) {
   const response = await fetch(`${env.apiUrl}/users`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(userData),
   });
 
