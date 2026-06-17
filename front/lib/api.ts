@@ -26,6 +26,12 @@ type UserData = {
   password: string;
 };
 
+type SubscribeData = {
+  userId: string;
+  offerId: string;
+  status: string;
+};
+
 export type LoginResponse = {
   accessToken: string;
 };
@@ -76,6 +82,23 @@ export async function createUser(userData: UserData) {
 
   if (!response.ok) {
     throw new Error("Failed to create user");
+  }
+
+  return response.json();
+}
+
+
+export async function subscribeOffer(subscribeData: SubscribeData) {
+  const response = await fetch(`${env.apiUrl}/subscriptions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(subscribeData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to subscribe to the offer");
   }
 
   return response.json();

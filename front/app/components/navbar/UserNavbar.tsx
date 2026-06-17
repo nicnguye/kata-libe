@@ -4,22 +4,27 @@ import UnsubscribeButton from "./UnsubscribeButton";
 import LogoutButton from "./LogoutButton";
 import ProfileButton from "./ProfileButton";
 
+type Subscription = {
+  offerId: string;
+  status: string;
+}
+
 type User = {
   firstName: string;
   lastName: string;
   email: string;
-  subscription: Array<any>;
+  subscription: Array<Subscription>;
 };
 
 export default function UserNavbar({ user }: { user: User }) {
   const { subscription } = user;
   const hasSubscription =
-    subscription.length && subscription.some((s) => s.status === "ACTIVE");
+    !!subscription.length && subscription.some((s) => s.status === "ACTIVE");
 
   return (
     <div className="flex gap-10 items-center">
       <div className="flex">
-        <SubscriptionButton />
+        <SubscriptionButton hasSubscription={hasSubscription} />
         {!!hasSubscription && (
           <>
             <SubscriptionChangeButton />

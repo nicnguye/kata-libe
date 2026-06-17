@@ -15,7 +15,7 @@ export default function OfferCardGrid({
   offers: OfferCardProps[];
 }) {
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="flex flex-row flex-wrap gap-4">
       {offers.map((offer) => (
         <Link key={offer.title} href={`/offers/${offer.id}`}>
           <OfferCard key={offer.title} {...offer} />
