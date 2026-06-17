@@ -1,18 +1,11 @@
 import Link from "next/link";
 import OfferCard from "@/app/components/OfferCard";
-
-type OfferCardProps = {
-  id: string;
-  title: string;
-  price: number;
-  description: string;
-  advantage: string;
-};
+import { Offer } from "@/types/Offer";
 
 export default function OfferCardGrid({
   offers,
 }: {
-  offers: OfferCardProps[];
+  offers: Offer[];
 }) {
   return (
     <div className="flex flex-row flex-wrap gap-4">

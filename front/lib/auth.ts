@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { User } from "@/types/User";
 
 export async function getToken() {
   const cookiesStore = await cookies();
@@ -6,7 +7,7 @@ export async function getToken() {
   return accessToken;
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<User | null> {
   const token = await getToken();
 
   if (!token) {

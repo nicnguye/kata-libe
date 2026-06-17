@@ -3,17 +3,7 @@ import { redirect } from "next/navigation";
 import ProfileInfo from "@/app/components/profile/ProfileInfo";
 import CurrentSubscription from "@/app/components/profile/CurrentSubscription";
 import { getCurrentUser } from "@/lib/auth";
-
-type Subscription = {
-  offerId: string;
-  status: string;
-  offer: {
-    title: string;
-    price: number;
-    description: string;
-    advantage: string;
-  };
-}
+import { UserSubscription } from "@/types/UserSubscription";
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();
@@ -21,12 +11,14 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  const subscription = user.subscription.find((s: Subscription) => s.status === "ACTIVE");
+  const subscription = user.subscription.find(
+    (s: UserSubscription) => s.status === "ACTIVE",
+  );
 
   return (
     <div>
       <ProfileInfo user={user} />
-      <CurrentSubscription offer={subscription.offer} />
+      <CurrentSubscription offer={subscription?.offer} />
     </div>
   );
 }

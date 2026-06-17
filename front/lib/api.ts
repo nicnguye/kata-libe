@@ -1,16 +1,9 @@
 import { env } from "@/lib/env";
+import { Offer } from "@/types/Offer";
 
 if (!env.apiUrl) {
   throw new Error("API_URL is missing");
 }
-
-type Offer = {
-  id: string;
-  title: string;
-  description: string;
-  advantage: string;
-  price: number;
-};
 
 type UserLoginData = {
   email: string;

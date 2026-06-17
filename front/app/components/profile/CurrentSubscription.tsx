@@ -1,16 +1,10 @@
 import OfferCard from "@/app/components/OfferCard";
-
-type OfferCardProps = {
-  title: string;
-  price: number;
-  description: string;
-  advantage: string;
-};
+import { Offer } from "@/types/Offer";
 
 export default function CurrentSubscription({
   offer,
 }: {
-  offer: OfferCardProps;
+  offer?: Offer;
 }) {
   return (
     <div className="p-8 flex flex-col justify-center items-center gap-8">

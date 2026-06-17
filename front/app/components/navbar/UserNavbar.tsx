@@ -3,18 +3,7 @@ import SubscriptionChangeButton from "./SubscriptionChangeButton";
 import UnsubscribeButton from "./UnsubscribeButton";
 import LogoutButton from "./LogoutButton";
 import ProfileButton from "./ProfileButton";
-
-type Subscription = {
-  offerId: string;
-  status: string;
-}
-
-type User = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  subscription: Array<Subscription>;
-};
+import { User } from "@/types/User";
 
 export default function UserNavbar({ user }: { user: User }) {
   const { subscription } = user;

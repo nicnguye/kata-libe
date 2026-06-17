@@ -3,11 +3,7 @@
 import Form from "next/form";
 import { useActionState, useState } from "react";
 import { subscribe } from "@/app/offers/[id]/subscribe/actions";
-
-type UserInfo = {
-  id: string;
-  email: string;
-};
+import { UserInfo } from "@/types/UserInfo";
 
 export default function Page({
   offerId,

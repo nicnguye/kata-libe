@@ -2,9 +2,9 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { login, LoginResponse } from "@/lib/api";
+import { login } from "@/lib/api";
 
-export async function userLogin(formData: FormData): Promise<LoginResponse> {
+export async function userLogin(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 

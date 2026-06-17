@@ -1,10 +1,4 @@
-type UserInfo = {
-  lastName: string;
-  firstName: string;
-  gender: string;
-  age: number;
-  email: string;
-};
+import { UserInfo } from "@/types/UserInfo";
 
 export default function ProfileInfo({ user }: { user: UserInfo }) {
   return (

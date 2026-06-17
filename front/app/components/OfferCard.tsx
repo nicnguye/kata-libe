@@ -1,18 +1,12 @@
 import Image from "next/image";
-
-type OfferCardProps = {
-  title: string;
-  price: number;
-  description: string;
-  advantage: string;
-};
+import { Offer } from "@/types/Offer";
 
 export default function OfferCard({
   title,
   price,
   description,
   advantage,
-}: OfferCardProps) {
+}: Offer) {
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm h-80 flex flex-col gap-4 hover:shadow-xl w-sm">
       <h2 className="text-sky-800 text-2xl font-bold">{title}</h2>
