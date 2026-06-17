@@ -4,7 +4,7 @@ import OfferCard from "@/app/components/OfferCard";
 import { getOffer } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function OfferSubscribePage({ params }: { params: { id: string } }) {
   const user = await getCurrentUser();
   if (!user?.id) {
     redirect("/login");

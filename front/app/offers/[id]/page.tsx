@@ -2,7 +2,7 @@ import Link from "next/link";
 import OfferCard from "@/app/components/OfferCard";
 import { getOffer } from "@/lib/api";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function OfferPage({ params }: { params: { id: string } }) {
   const { id } = await params;
   const offer = await getOffer(id);
 

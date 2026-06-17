@@ -5,7 +5,7 @@ export default function DefaultNavbar() {
   return (
     <div className="flex gap-10 items-center">
       <div>
-        <SubscriptionButton />
+        <SubscriptionButton hasSubscription={false} />
       </div>
       <div className="flex gap-4 items-center">
         <LoginButton />

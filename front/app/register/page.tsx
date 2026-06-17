@@ -4,7 +4,7 @@ import Form from "next/form";
 import { useActionState } from "react";
 import { register } from "./actions";
 
-export default function Page() {
+export default function RegisterPage() {
   const [state, action, pending] = useActionState(register, { errors: {} });
 
   return (
