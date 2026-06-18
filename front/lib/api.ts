@@ -5,11 +5,6 @@ if (!env.apiUrl) {
   throw new Error("API_URL is missing");
 }
 
-type UserLoginData = {
-  email: string;
-  password: string;
-};
-
 type UserData = {
   firstName: string;
   lastName: string;
@@ -25,8 +20,8 @@ type SubscribeData = {
   status: string;
 };
 
-export type LoginResponse = {
-  accessToken: string;
+type UnsubscribeData = {
+  status: string;
 };
 
 export async function getOffer(id: string): Promise<Offer> {
@@ -48,20 +43,16 @@ export async function getOffers(): Promise<Offer[]> {
   return response.json();
 }
 
-export async function login(userLoginData: UserLoginData): Promise<LoginResponse> {
-  const response = await fetch(`${env.apiUrl}/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(userLoginData),
+export async function getUpgradedOffer(
+  currentOffer: Offer,
+): Promise<Offer> {
+  const offers = await getOffers();
+  const offer = offers.find((offer) => {
+    if (offer.price > currentOffer.price && offer.allowUpgrade) {
+      return offer;
+    }
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to login");
-  }
-
-  return response.json();
+  return offer || currentOffer;
 }
 
 export async function createUser(userData: UserData) {
@@ -80,7 +71,6 @@ export async function createUser(userData: UserData) {
   return response.json();
 }
 
-
 export async function subscribeOffer(subscribeData: SubscribeData) {
   const response = await fetch(`${env.apiUrl}/subscriptions`, {
     method: "POST",
@@ -92,6 +82,50 @@ export async function subscribeOffer(subscribeData: SubscribeData) {
 
   if (!response.ok) {
     throw new Error("Failed to subscribe to the offer");
+  }
+
+  return response.json();
+}
+
+export async function upgradeSubscription(
+  subscriptionId: string,
+  subscribeData: SubscribeData,
+) {
+  const response = await fetch(
+    `${env.apiUrl}/subscriptions/${subscriptionId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(subscribeData),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to change offer subscription");
+  }
+
+  return response.json();
+}
+
+export async function cancelSubscription(
+  subscriptionId: string,
+  unsubscribeData: UnsubscribeData,
+) {
+  const response = await fetch(
+    `${env.apiUrl}/subscriptions/${subscriptionId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(unsubscribeData),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to unsubscribe");
   }
 
   return response.json();

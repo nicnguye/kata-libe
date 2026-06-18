@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createUser, UserData } from "@/lib/api";
+import { createUser } from "@/lib/api";
 import { registerSchema } from "@/lib/validators/register";
 import { z } from "zod";
 

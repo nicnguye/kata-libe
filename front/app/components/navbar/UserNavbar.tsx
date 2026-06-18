@@ -7,14 +7,13 @@ import { User } from "@/types/User";
 
 export default function UserNavbar({ user }: { user: User }) {
   const { subscription } = user;
-  const hasSubscription =
-    !!subscription.length && subscription.some((s) => s.status === "ACTIVE");
+  const hasSubscription = !!subscription.find((s) => s.status === "ACTIVE");
 
   return (
     <div className="flex gap-10 items-center">
       <div className="flex">
         <SubscriptionButton hasSubscription={hasSubscription} />
-        {!!hasSubscription && (
+        {hasSubscription && (
           <>
             <SubscriptionChangeButton />
             <UnsubscribeButton />

@@ -132,7 +132,7 @@ export default function Page({
               <button
                 disabled={pending}
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-sky-800 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-800"
+                className="flex w-full justify-center rounded-md bg-sky-800 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-800 cursor-pointer"
               >
                 {pending ? "Abonnement en cours..." : "S'abonner"}
               </button>
