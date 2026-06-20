@@ -9,9 +9,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
+import { ApiOkResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { LoginAuthDto } from './dto/login-auth.dto';
+import { ProfileAuthResponseDto } from './dto/profile-auth-response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,14 +25,15 @@ export class AuthController {
     return this.authService.login(loginDto.email, loginDto.password);
   }
 
+  @ApiOkResponse({ type: ProfileAuthResponseDto })
   @UseGuards(AuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
     // Get jwt payload from request
-    if (!req?.user?.sub) {
+    if (!req?.user?.id) {
       throw new UnauthorizedException();
     }
 
-    return this.authService.getProfile(req.user.sub);
+    return this.authService.getProfile(req.user.id as string);
   }
 }

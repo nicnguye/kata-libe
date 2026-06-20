@@ -1,13 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsUUID } from 'class-validator';
 
 export class SubscriptionResponseDto {
-  @ApiProperty()
+  @IsUUID()
+  @ApiProperty({ format: 'uuid' })
   id: string;
 
-  @ApiProperty()
+  @IsUUID()
+  @ApiProperty({ format: 'uuid' })
   userId: string;
 
-  @ApiProperty()
+  @IsUUID()
+  @ApiProperty({ format: 'uuid' })
   offerId: string;
 
   @ApiProperty({

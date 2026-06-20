@@ -1,9 +1,10 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ChangeSubscriptionDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: 'a9a6e149-5eb3-44a7-a667-1a896aeff897' })
+  @IsUUID()
+  @ApiProperty({ format: 'uuid' })
   offerId: string;
 }

@@ -7,11 +7,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
+import { AuthGuard } from '../auth/auth.guard';
 import { SubscriptionsService } from './subscriptions.service';
 import { SubscriptionExistGuard } from './subscription.guard';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { ChangeSubscriptionDto } from './dto/change-subscription.dto';
 import { SubscriptionResponseDto } from './dto/subscription-response.dto';
+import { SubscriptionStatus } from 'generated/prisma/client';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
@@ -33,7 +35,7 @@ export class SubscriptionsController {
     }
 
     const data = {
-      status: createSubscriptionDto.status,
+      status: SubscriptionStatus.ACTIVE,
       user: {
         connect: {
           id: createSubscriptionDto.userId,
@@ -49,6 +51,7 @@ export class SubscriptionsController {
   }
 
   @ApiOkResponse({ type: SubscriptionResponseDto })
+  @UseGuards(AuthGuard)
   @Post(':id/cancel')
   @UseGuards(SubscriptionExistGuard)
   async cancel(@Param('id') id: string): Promise<SubscriptionResponseDto> {
@@ -56,6 +59,7 @@ export class SubscriptionsController {
   }
 
   @ApiOkResponse({ type: SubscriptionResponseDto })
+  @UseGuards(AuthGuard)
   @Post(':id/change')
   @UseGuards(SubscriptionExistGuard)
   async change(

@@ -1,8 +1,9 @@
-import { IsDecimal } from 'class-validator';
+import { IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class OfferResponseDto {
-  @ApiProperty()
+  @IsUUID()
+  @ApiProperty({ format: 'uuid' })
   id: string;
 
   @ApiProperty()

@@ -1,19 +1,16 @@
-import { IsString, IsNotEmpty, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { SubscriptionStatus } from 'generated/prisma/client';
 
 export class CreateSubscriptionDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: '1' })
+  @IsUUID()
+  @ApiProperty({ format: 'uuid' })
   userId: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: '1' })
+  @IsUUID()
+  @ApiProperty({ format: 'uuid' })
   offerId: string;
-
-  @IsEnum(SubscriptionStatus)
-  @ApiProperty({ example: 'ACTIVE' })
-  status: SubscriptionStatus;
 }
