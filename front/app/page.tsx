@@ -1,11 +1,12 @@
-import { getCurrentUser } from "@/lib/auth";
-import { getOffers, getAvailableOffers } from "@/lib/api";
+import { authApi } from "@/lib/api/auth.api";
+import { offerApi } from "@/lib/api/offer.api";
+import { offerService } from "@/lib/services/offer.service";
 import { getCurrentSubscription } from "@/lib/utils";
 import OfferCardGrid from "@/app/components/OfferCardGrid";
 
 export default async function Home() {
-  const user = await getCurrentUser();
-  const offers = user ? await getAvailableOffers(user) : await getOffers();
+  const user = await authApi.getCurrentUser();
+  const offers = user ? await offerService.getAvailableOffers(user) : await offerApi.getOffers();
   const subscription = user && getCurrentSubscription(user);
 
   return (

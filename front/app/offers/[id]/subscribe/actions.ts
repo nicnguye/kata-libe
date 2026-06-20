@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { subscribeOffer } from "@/lib/api";
+import { subscriptionApi } from "@/lib/api/subscription.api";
 import { subscribeSchema } from "@/lib/validators/subscribe";
 import { z } from "zod";
 import { User } from "@/types/User";
@@ -44,12 +44,17 @@ export async function subscribe(
     return { errors: z.flattenError(validation.error).fieldErrors };
   }
 
-  const hasSubscription = subscribeData.user.subscription.find((s) => s.status === "ACTIVE");
+  const hasSubscription = subscribeData.user.subscription.find(
+    (s) => s.status === "ACTIVE",
+  );
   if (hasSubscription) {
     return { success: false, message: "Vous avez déjà une abonnement actif" };
   }
 
-  const response = await subscribeOffer({ userId: subscribeData.user.id, offerId: subscribeData.offerId, status: "ACTIVE" });
+  const response = await subscriptionApi.subscribeOffer({
+    userId: subscribeData.user.id,
+    offerId: subscribeData.offerId,
+  });
 
   revalidatePath("/");
 

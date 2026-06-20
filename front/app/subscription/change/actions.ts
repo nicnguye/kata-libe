@@ -1,12 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { upgradeSubscription } from "@/lib/api";
+import { subscriptionApi } from "@/lib/api/subscription.api";
 import { redirect } from "next/navigation";
 
 type ChangeSubscriptionData = {
   subscriptionId: string;
-  userId: string;
   offerId: string;
 };
 
@@ -20,10 +19,9 @@ export async function changeSubscription(
   prevState: State,
   formData: FormData,
 ) {
-  const { subscriptionId, ...subscribeData } = changeSubscriptionData;
-  const response = await upgradeSubscription(subscriptionId, {
-    ...subscribeData,
-    status: "ACTIVE",
+  const { subscriptionId, offerId } = changeSubscriptionData;
+  const response = await subscriptionApi.upgradeSubscription(subscriptionId, {
+    offerId,
   });
 
   if (!response.success) {
@@ -31,5 +29,5 @@ export async function changeSubscription(
   }
 
   revalidatePath("/");
-  redirect(`/offers/${subscribeData.offerId}/upgrade`);
+  redirect(`/offers/${offerId}/upgrade`);
 }

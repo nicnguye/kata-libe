@@ -1,5 +1,5 @@
 import OfferCard from "@/app/components/OfferCard";
-import { getOffer } from "@/lib/api";
+import { offerApi } from "@/lib/api/offer.api";
 
 export default async function OfferUpgradePage({
   params,
@@ -7,7 +7,7 @@ export default async function OfferUpgradePage({
   params: { id: string };
 }) {
   const { id } = await params;
-  const offer = await getOffer(id);
+  const offer = await offerApi.getOffer(id);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">

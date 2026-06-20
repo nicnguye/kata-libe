@@ -3,8 +3,9 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { login } from "@/lib/auth";
+import { authApi } from "@/lib/api/auth.api";
 import { loginSchema } from "@/lib/validators/login";
+import { tokenService } from "@/lib/services/token.service";
 
 type State = {
   errors: {
@@ -26,22 +27,17 @@ export async function userLogin(
     return { errors: z.flattenError(validation.error).fieldErrors };
   }
 
-  const response = await login({ email, password });
+  const response = await authApi.login({ email, password });
   if (!response.accessToken) {
     return { errors: {}, success: false, message: response.message };
   }
 
-  const cookiesStore = await cookies();
-  cookiesStore.set("accessToken", response.accessToken, {
-    httpOnly: true,
-    secure: true,
-  });
+  await tokenService.setToken(response.accessToken);
 
   redirect("/");
 }
 
 export async function logout() {
-  const cookiesStore = await cookies();
-  cookiesStore.delete("accessToken");
+  await tokenService.deleteToken();
   redirect("/");
 }

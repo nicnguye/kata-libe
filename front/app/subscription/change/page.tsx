@@ -2,12 +2,12 @@ import { redirect } from "next/navigation";
 
 import OfferCard from "@/app/components/OfferCard";
 import ChangeSubscriptionButton from "@/app/components/ChangeSubscriptionButton";
-import { getUpgradedOffer } from "@/lib/api";
-import { getCurrentUser } from "@/lib/auth";
+import { offerService } from "@/lib/services/offer.service";
+import { authApi } from "@/lib/api/auth.api";
 import { getCurrentSubscription } from "@/lib/utils";
 
 export default async function SubscriptionChangePage() {
-  const user = await getCurrentUser();
+  const user = await authApi.getCurrentUser();
   if (!user?.id) {
     redirect("/login");
   }
@@ -18,7 +18,7 @@ export default async function SubscriptionChangePage() {
     redirect("/");
   }
 
-  const upgradedOffer = await getUpgradedOffer(subscription.offer);
+  const upgradedOffer = await offerService.getUpgradedOffer(subscription.offer);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
@@ -38,7 +38,7 @@ export default async function SubscriptionChangePage() {
           ) : (
             <>
               <OfferCard key={upgradedOffer.title} {...upgradedOffer} />
-              <ChangeSubscriptionButton  subscriptionId={subscription.id} userId={user.id} offerId={upgradedOffer.id} />
+              <ChangeSubscriptionButton  subscriptionId={subscription.id} offerId={upgradedOffer.id} />
             </>
           )}
         </div>

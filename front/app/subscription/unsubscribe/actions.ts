@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { cancelSubscription } from "@/lib/api";
+import { subscriptionApi } from "@/lib/api/subscription.api";
 
 type UnsubscribeData = {
   subscriptionId: string;
@@ -19,9 +19,7 @@ export async function unsubscribe(
   formData: FormData,
 ) {
   const { subscriptionId } = unsubscribeData;
-  const response = await cancelSubscription(subscriptionId, {
-    status: "CANCELLED",
-  });
+  const response = await subscriptionApi.cancelSubscription(subscriptionId);
 
   if (!response.success) {
     return response;

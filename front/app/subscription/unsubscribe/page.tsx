@@ -2,11 +2,11 @@ import { redirect } from "next/navigation";
 
 import OfferCard from "@/app/components/OfferCard";
 import UnsubscribeButton from "@/app/components/UnsubscribeButton";
-import { getCurrentUser } from "@/lib/auth";
+import { authApi } from "@/lib/api/auth.api";
 import { getCurrentSubscription } from "@/lib/utils";
 
 export default async function UnsubscribePage() {
-  const user = await getCurrentUser();
+  const user = await authApi.getCurrentUser();
   if (!user?.id) {
     redirect("/login");
   }

@@ -1,9 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { z } from "zod";
-import { createUser } from "@/lib/api";
+import { userApi } from "@/lib/api/user.api";
 import { registerSchema } from "@/lib/validators/register";
 
 type State = {
@@ -44,6 +42,6 @@ export async function register(
     return { errors: z.flattenError(validation.error).fieldErrors };
   }
 
-  const response = await createUser(data);
+  const response = await userApi.createUser(data);
   return response;
 }

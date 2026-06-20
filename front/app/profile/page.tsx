@@ -2,11 +2,11 @@ import { redirect } from "next/navigation";
 
 import ProfileInfo from "@/app/components/profile/ProfileInfo";
 import CurrentSubscription from "@/app/components/profile/CurrentSubscription";
-import { getCurrentUser } from "@/lib/auth";
+import { authApi } from "@/lib/api/auth.api";
 import { UserSubscription } from "@/types/UserSubscription";
 
 export default async function ProfilePage() {
-  const user = await getCurrentUser();
+  const user = await authApi.getCurrentUser();
   if (!user?.id) {
     redirect("/login");
   }

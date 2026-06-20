@@ -5,15 +5,13 @@ import { changeSubscription } from "@/app/subscription/change/actions";
 
 export default function ChangeSubscriptionButton({
   subscriptionId,
-  userId,
   offerId,
 }: {
   subscriptionId: string;
-  userId: string;
   offerId: string;
 }) {
   const [state, action, isPending] = useActionState(
-    changeSubscription.bind(null, { subscriptionId, userId, offerId }),
+    changeSubscription.bind(null, { subscriptionId, offerId }),
     {
       success: false,
       message: "",

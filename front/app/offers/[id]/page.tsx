@@ -1,7 +1,7 @@
 import Link from "next/link";
 import OfferCard from "@/app/components/OfferCard";
-import { getOffer } from "@/lib/api";
-import { getCurrentUser } from "@/lib/auth";
+import { offerApi } from "@/lib/api/offer.api";
+import { authApi } from "@/lib/api/auth.api";
 import { isCurrentOffer, getCurrentSubscription } from "@/lib/utils";
 
 export default async function OfferPage({
@@ -10,8 +10,8 @@ export default async function OfferPage({
   params: { id: string };
 }) {
   const { id } = await params;
-  const offer = await getOffer(id);
-  const user = await getCurrentUser();
+  const offer = await offerApi.getOffer(id);
+  const user = await authApi.getCurrentUser();
   const subscription = user && getCurrentSubscription(user);
 
   return (
