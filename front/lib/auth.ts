@@ -47,9 +47,9 @@ export async function login(
     },
     body: JSON.stringify(userLoginData),
   });
-
   if (!response.ok) {
-    throw new Error("Failed to login");
+    const error = await response.json();
+    throw new Error(error.message);
   }
 
   return response.json();

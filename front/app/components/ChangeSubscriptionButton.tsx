@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useActionState } from "react";
 import { changeSubscription } from "@/app/subscription/change/actions";
@@ -12,26 +12,25 @@ export default function ChangeSubscriptionButton({
   userId: string;
   offerId: string;
 }) {
-  const [state, action, isPending] = useActionState(changeSubscription, { success: false, message: "" });
-
-  const handleClick = () => {
-    action({
-      subscriptionId,
-      userId,
-      offerId,
-    });
-  };
+  const [state, action, isPending] = useActionState(
+    changeSubscription.bind(null, { subscriptionId, userId, offerId }),
+    {
+      success: false,
+      message: "",
+    },
+  );
 
   return (
     <>
-      <button
-        className="mt-4 w-full text-white bg-sky-800 border border-transparent rounded-xs px-4 py-2.5 hover:bg-sky-900 cursor-pointer"
-        type="button"
-        onClick={handleClick}
-        disabled={isPending}
-      >
-        {isPending ? "Changement en cours..." : "Changer mon offre"}
-      </button>
+      <form action={action}>
+        <button
+          className="mt-4 w-full text-white bg-sky-800 border border-transparent rounded-xs px-4 py-2.5 hover:bg-sky-900 cursor-pointer"
+          type="submit"
+          disabled={isPending}
+        >
+          {isPending ? "Changement en cours..." : "Changer mon offre"}
+        </button>
+      </form>
       {state?.message && (
         <p className={state.success ? "text-green-600" : "text-red-600"}>
           {state.message}

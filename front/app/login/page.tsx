@@ -1,8 +1,12 @@
-import Form from "next/form";
+"use client";
+
 import Link from "next/link";
+import { useActionState } from "react";
 import { userLogin } from "./actions";
 
 export default function Page() {
+  const [state, action, pending] = useActionState(userLogin, { errors: {} });
+
   return (
     <>
       <div className="flex flex-col justify-center px-6 py-12">
@@ -11,7 +15,7 @@ export default function Page() {
         </h2>
 
         <div className="mt-10 sm:mx-auto sm:max-w-sm sm:w-full">
-          <Form action={userLogin} className="space-y-6">
+          <form action={action} className="space-y-6">
             <div>
               <label
                 htmlFor="email"
@@ -55,13 +59,19 @@ export default function Page() {
 
             <div>
               <button
+                disabled={pending}
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-sky-800 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-800"
               >
-                Me connecter
+                {pending ? "Connexion en cours..." : "Me connecter"}
               </button>
             </div>
-          </Form>
+          </form>
+          {state?.message && (
+            <p className={state.success ? "text-green-600" : "text-red-600"}>
+              {state.message}
+            </p>
+          )}
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Pas encore membre?{" "}

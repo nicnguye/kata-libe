@@ -16,8 +16,9 @@ type State = {
 };
 
 export async function changeSubscription(
-  prevState: State,
   changeSubscriptionData: ChangeSubscriptionData,
+  prevState: State,
+  formData: FormData
 ) {
   const { subscriptionId, ...subscribeData } = changeSubscriptionData;
   try {

@@ -1,5 +1,10 @@
 import { env } from "@/lib/env";
 import { Offer } from "@/types/Offer";
+import { User } from "@/types/User";
+import {
+  isFirstSubscription,
+  getLastSubscription,
+} from "@/lib/utils";
 
 if (!env.apiUrl) {
   throw new Error("API_URL is missing");
@@ -43,9 +48,24 @@ export async function getOffers(): Promise<Offer[]> {
   return response.json();
 }
 
-export async function getUpgradedOffer(
-  currentOffer: Offer,
-): Promise<Offer> {
+export async function getAvailableOffers(user: User): Promise<Offer[]> {
+  const offers = await getOffers();
+
+  // first subscription
+  if (isFirstSubscription(user)) {
+    return offers.filter((offer) => offer.allowFirstSubscription);
+  }
+
+  // resubscription
+  const lastSubscription = getLastSubscription(user);
+  const filteredOffers = offers.filter(
+    (offer) =>
+      offer.allowResubscription && offer.id !== lastSubscription.offerId,
+  );
+  return filteredOffers;
+}
+
+export async function getUpgradedOffer(currentOffer: Offer): Promise<Offer> {
   const offers = await getOffers();
   const offer = offers.find((offer) => {
     if (offer.price > currentOffer.price && offer.allowUpgrade) {

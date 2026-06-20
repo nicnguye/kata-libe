@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import OfferCard from "@/app/components/OfferCard";
 import UnsubscribeButton from "@/app/components/UnsubscribeButton";
 import { getCurrentUser } from "@/lib/auth";
-import { UserSubscription } from "@/types/UserSubscription";
+import { getCurrentSubscription } from "@/lib/utils";
 
 export default async function UnsubscribePage() {
   const user = await getCurrentUser();
@@ -11,9 +11,7 @@ export default async function UnsubscribePage() {
     redirect("/login");
   }
 
-  const subscription = user.subscription.find(
-    (s: UserSubscription) => s.status === "ACTIVE",
-  );
+  const subscription = getCurrentSubscription(user);
 
   if (!subscription) {
     redirect("/");

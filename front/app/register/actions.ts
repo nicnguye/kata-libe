@@ -2,9 +2,9 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { createUser } from "@/lib/api";
 import { registerSchema } from "@/lib/validators/register";
-import { z } from "zod";
 
 type State = {
   errors?: {
@@ -18,7 +18,10 @@ type State = {
   success?: boolean;
 };
 
-export async function register(prevState: State, formData: FormData): Promise<State> {
+export async function register(
+  prevState: State,
+  formData: FormData,
+): Promise<State> {
   const firstName = formData.get("firstName") as string;
   const lastName = formData.get("lastName") as string;
   const gender = formData.get("gender") as string;
@@ -40,12 +43,6 @@ export async function register(prevState: State, formData: FormData): Promise<St
     return { errors: z.flattenError(validation.error).fieldErrors };
   }
 
-    await createUser(data);
-    return { success: true };
-}
-
-export async function logout() {
-  const cookiesStore = await cookies();
-  cookiesStore.delete("accessToken");
-  redirect("/");
+  await createUser(data);
+  return { success: true };
 }
