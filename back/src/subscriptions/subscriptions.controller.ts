@@ -1,29 +1,27 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
-  NotFoundException,
   ConflictException,
   UseGuards,
 } from '@nestjs/common';
-import { Subscription } from 'generated/prisma/client';
+import { ApiOkResponse } from '@nestjs/swagger';
 import { SubscriptionsService } from './subscriptions.service';
 import { SubscriptionExistGuard } from './subscription.guard';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { ChangeSubscriptionDto } from './dto/change-subscription.dto';
+import { SubscriptionResponseDto } from './dto/subscription-response.dto';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
+  @ApiOkResponse({ type: SubscriptionResponseDto })
   @Post()
   async create(
     @Body() createSubscriptionDto: CreateSubscriptionDto,
-  ): Promise<Subscription> {
+  ): Promise<SubscriptionResponseDto> {
     const subscription = await this.subscriptionsService.findOneBy({
       userId: createSubscriptionDto.userId,
       status: 'ACTIVE',
@@ -50,32 +48,20 @@ export class SubscriptionsController {
     return this.subscriptionsService.create(data);
   }
 
-  @Get()
-  findAll() {
-    return this.subscriptionsService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const subscription = await this.subscriptionsService.findOne(id);
-    if (!subscription) {
-      throw new NotFoundException('Subscription not found');
-    }
-    return subscription;
-  }
-
-  @Patch(':id')
+  @ApiOkResponse({ type: SubscriptionResponseDto })
+  @Post(':id/cancel')
   @UseGuards(SubscriptionExistGuard)
-  async update(
+  async cancel(@Param('id') id: string): Promise<SubscriptionResponseDto> {
+    return this.subscriptionsService.cancel(id);
+  }
+
+  @ApiOkResponse({ type: SubscriptionResponseDto })
+  @Post(':id/change')
+  @UseGuards(SubscriptionExistGuard)
+  async change(
     @Param('id') id: string,
-    @Body() updateSubscriptionDto: UpdateSubscriptionDto,
-  ) {
-    return this.subscriptionsService.update(id, updateSubscriptionDto);
-  }
-
-  @Delete(':id')
-  @UseGuards(SubscriptionExistGuard)
-  async remove(@Param('id') id: string) {
-    return this.subscriptionsService.remove(id);
+    @Body() changeSubscriptionDto: ChangeSubscriptionDto,
+  ): Promise<SubscriptionResponseDto> {
+    return this.subscriptionsService.change(id, changeSubscriptionDto);
   }
 }

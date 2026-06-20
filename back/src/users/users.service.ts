@@ -10,12 +10,12 @@ export class UsersService {
     return this.prisma.user.create({ data: createUserDto });
   }
 
-  findAll() {
-    return this.prisma.user.findMany();
-  }
-
   findOne(id: string) {
     return this.prisma.user.findUnique({ where: { id } });
+  }
+
+  findOneBy(where: Prisma.UserWhereUniqueInput) {
+    return this.prisma.user.findUnique({ where });
   }
 
   getUserProfile(id: string) {
@@ -26,15 +26,4 @@ export class UsersService {
     });
   }
 
-  findOneBy(where: Prisma.UserWhereUniqueInput) {
-    return this.prisma.user.findUnique({ where });
-  }
-
-  update(id: string, updateUserDto: Prisma.UserUpdateInput) {
-    return this.prisma.user.update({ where: { id }, data: updateUserDto });
-  }
-
-  remove(id: string) {
-    return this.prisma.user.delete({ where: { id } });
-  }
 }

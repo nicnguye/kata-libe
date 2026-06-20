@@ -3,53 +3,30 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
-  UseGuards,
   NotFoundException,
 } from '@nestjs/common';
-import { Offer } from 'generated/prisma/client';
+import { ApiOkResponse } from '@nestjs/swagger';
 import { OffersService } from './offers.service';
-import { OfferExistGuard } from './offers.guard';
-import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
+import { OfferResponseDto } from './dto/offer-response.dto';
 
 @Controller('offers')
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
 
-  @Post()
-  create(@Body() createOfferDto: CreateOfferDto): Promise<Offer> {
-    return this.offersService.create(createOfferDto);
-  }
-
+  @ApiOkResponse({ type: OfferResponseDto })
   @Get()
-  findAll(): Promise<Offer[]> {
+  findAll() {
     return this.offersService.findAll();
   }
 
+  @ApiOkResponse({ type: OfferResponseDto })
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Offer> {
+  async findOne(@Param('id') id: string) {
     const offer = await this.offersService.findOne(id);
     if (!offer) {
       throw new NotFoundException('Offer not found');
     }
     return offer;
-  }
-
-  @Patch(':id')
-  @UseGuards(OfferExistGuard)
-  async update(
-    @Param('id') id: string,
-    @Body() updateOfferDto: UpdateOfferDto,
-  ) {
-    return this.offersService.update(id, updateOfferDto);
-  }
-
-  @Delete(':id')
-  @UseGuards(OfferExistGuard)
-  async remove(@Param('id') id: string) {
-    return this.offersService.remove(id);
   }
 }

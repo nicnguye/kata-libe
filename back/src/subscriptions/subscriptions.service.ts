@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Subscription, Prisma } from 'generated/prisma/client';
+import { ChangeSubscriptionDto } from './dto/change-subscription.dto';
 
 @Injectable()
 export class SubscriptionsService {
@@ -12,11 +13,7 @@ export class SubscriptionsService {
     return this.prisma.subscription.create({ data: createSubscriptionDto });
   }
 
-  findAll() {
-    return this.prisma.subscription.findMany();
-  }
-
-  findOne(id: string) {
+  findOne(id: string): Promise<Subscription | null> {
     return this.prisma.subscription.findUnique({ where: { id } });
   }
 
@@ -31,7 +28,17 @@ export class SubscriptionsService {
     });
   }
 
-  remove(id: string) {
-    return this.prisma.subscription.delete({ where: { id } });
+  cancel(id: string) {
+    return this.prisma.subscription.update({
+      where: { id },
+      data: { status: 'CANCELLED' },
+    });
+  }
+
+  change(id: string, changeSubscriptionDto: ChangeSubscriptionDto) {
+    return this.prisma.subscription.update({
+      where: { id },
+      data: changeSubscriptionDto,
+    });
   }
 }
