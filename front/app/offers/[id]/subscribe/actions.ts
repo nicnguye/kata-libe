@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { subscribeOffer } from "@/lib/api";
 import { subscribeSchema } from "@/lib/validators/subscribe";
 import { z } from "zod";
+import { User } from "@/types/User";
 
 type State = {
   errors?: {
@@ -13,14 +14,19 @@ type State = {
     creditCard?: string[];
   };
   success?: boolean;
+  message?: string;
 };
 
 type SubscribeData = {
-    userId: string;
-    offerId: string;
-}
+  user: User;
+  offerId: string;
+};
 
-export async function subscribe(subscribeData: SubscribeData, prevState: State, formData: FormData): Promise<State> {
+export async function subscribe(
+  subscribeData: SubscribeData,
+  prevState: State,
+  formData: FormData,
+): Promise<State> {
   const email = formData.get("email") as string;
   const address = formData.get("address") as string;
   const phone = formData.get("phone") as string;
@@ -38,9 +44,14 @@ export async function subscribe(subscribeData: SubscribeData, prevState: State, 
     return { errors: z.flattenError(validation.error).fieldErrors };
   }
 
-    await subscribeOffer({ ...subscribeData, status: "ACTIVE" });
+  const hasSubscription = subscribeData.user.subscription.find((s) => s.status === "ACTIVE");
+  if (hasSubscription) {
+    return { success: false, message: "Vous avez déjà une abonnement actif" };
+  }
 
-    revalidatePath("/")
+  const response = await subscribeOffer({ userId: subscribeData.user.id, offerId: subscribeData.offerId, status: "ACTIVE" });
 
-    return { success: true };
+  revalidatePath("/");
+
+  return response;
 }

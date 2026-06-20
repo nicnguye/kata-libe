@@ -9,7 +9,6 @@ import { loginSchema } from "@/lib/validators/login";
 type State = {
   errors: {
     email?: string[];
-    password?: string[];
   };
   success?: boolean;
   message?: string;
@@ -27,19 +26,17 @@ export async function userLogin(
     return { errors: z.flattenError(validation.error).fieldErrors };
   }
 
-  try {
-    const response = await login({ email, password });
-    const cookiesStore = await cookies();
-    cookiesStore.set("accessToken", response.accessToken, {
-      httpOnly: true,
-      secure: true,
-    });
-  } catch (error) {
-    if (error instanceof Error) {
-      return { errors: {}, success: false, message: error.message };
-    }
+  const response = await login({ email, password });
+  if (!response.accessToken) {
+    return { errors: {}, success: false, message: response.message };
   }
-  
+
+  const cookiesStore = await cookies();
+  cookiesStore.set("accessToken", response.accessToken, {
+    httpOnly: true,
+    secure: true,
+  });
+
   redirect("/");
 }
 

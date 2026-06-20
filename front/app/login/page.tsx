@@ -34,6 +34,11 @@ export default function Page() {
                   placeholder="email@example.com"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-sky-800 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-800 sm:text-sm/6"
                 />
+                {state.errors?.email && (
+                  <p className="text-red-500 text-sm">
+                    {state.errors.email[0]}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -61,7 +66,7 @@ export default function Page() {
               <button
                 disabled={pending}
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-sky-800 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-800"
+                className="flex w-full justify-center rounded-md bg-sky-800 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-800 cursor-pointer"
               >
                 {pending ? "Connexion en cours..." : "Me connecter"}
               </button>

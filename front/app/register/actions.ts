@@ -16,6 +16,7 @@ type State = {
     password?: string[];
   };
   success?: boolean;
+  message?: string;
 };
 
 export async function register(
@@ -43,6 +44,6 @@ export async function register(
     return { errors: z.flattenError(validation.error).fieldErrors };
   }
 
-  await createUser(data);
-  return { success: true };
+  const response = await createUser(data);
+  return response;
 }

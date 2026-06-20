@@ -19,14 +19,14 @@ export async function unsubscribe(
   formData: FormData,
 ) {
   const { subscriptionId } = unsubscribeData;
-  try {
-    await cancelSubscription(subscriptionId, {
-      status: "CANCELLED",
-    });
-  } catch (e) {
-    return { success: false, message: "Une erreur est survenue" };
-  }
-  revalidatePath("/");
+  const response = await cancelSubscription(subscriptionId, {
+    status: "CANCELLED",
+  });
 
+  if (!response.success) {
+    return response;
+  }
+
+  revalidatePath("/");
   redirect("/");
 }

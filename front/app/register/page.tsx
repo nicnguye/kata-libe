@@ -10,9 +10,9 @@ export default function RegisterPage() {
   return (
     <>
       <div className="flex flex-col justify-center px-6 py-8">
-        {state.success && (
-          <div className="flex text-center bg-green-500 text-white sm:mx-auto sm:max-w-sm sm:w-full py-4 px-4 rounded-md gap-2">
-            <p>Compte créé avec succès</p>
+        {state?.message && (
+          <div className={`flex text-center ${state.success ? 'bg-green-500' : 'bg-red-500'} text-white sm:mx-auto sm:max-w-sm sm:w-full py-4 px-4 rounded-md gap-2`}>
+            <p>{state.message}</p>
           </div>
         )}
         <h2 className="mt-6 text-center text-2xl font-bold text-sky-800">

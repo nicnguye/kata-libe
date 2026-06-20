@@ -18,17 +18,18 @@ type State = {
 export async function changeSubscription(
   changeSubscriptionData: ChangeSubscriptionData,
   prevState: State,
-  formData: FormData
+  formData: FormData,
 ) {
   const { subscriptionId, ...subscribeData } = changeSubscriptionData;
-  try {
-    await upgradeSubscription(subscriptionId, {
-      ...subscribeData,
-      status: "ACTIVE",
-    });
-    revalidatePath("/");
-    redirect(`/offers/${subscribeData.offerId}/upgrade`);
-  } catch (e) {
-    return { success: false, message: "Une erreur est survenue" };
+  const response = await upgradeSubscription(subscriptionId, {
+    ...subscribeData,
+    status: "ACTIVE",
+  });
+
+  if (!response.success) {
+    return response;
   }
+
+  revalidatePath("/");
+  redirect(`/offers/${subscribeData.offerId}/upgrade`);
 }

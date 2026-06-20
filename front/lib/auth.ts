@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { User } from "@/types/User";
 import { env } from "@/lib/env";
+import { loginErrors } from "./errors";
 
 type UserLoginData = {
   email: string;
@@ -8,7 +9,8 @@ type UserLoginData = {
 };
 
 export type LoginResponse = {
-  accessToken: string;
+  accessToken: string | null;
+  message?: string;
 };
 
 export async function getToken() {
@@ -49,7 +51,7 @@ export async function login(
   });
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message);
+    return { message: loginErrors[error.statusCode], accessToken: null };
   }
 
   return response.json();

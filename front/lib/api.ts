@@ -1,10 +1,8 @@
 import { env } from "@/lib/env";
 import { Offer } from "@/types/Offer";
 import { User } from "@/types/User";
-import {
-  isFirstSubscription,
-  getLastSubscription,
-} from "@/lib/utils";
+import { isFirstSubscription, getLastSubscription } from "@/lib/utils";
+import { subscriptionErrors, registerErrors } from "./errors";
 
 if (!env.apiUrl) {
   throw new Error("API_URL is missing");
@@ -85,10 +83,11 @@ export async function createUser(userData: UserData) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to create user");
+    const error = await response.json();
+    return { success: false, message: registerErrors[error?.statusCode] || "Inscription échoué" };
   }
 
-  return response.json();
+  return { success: true, message: "Inscris avec succès" };
 }
 
 export async function subscribeOffer(subscribeData: SubscribeData) {
@@ -101,10 +100,11 @@ export async function subscribeOffer(subscribeData: SubscribeData) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to subscribe to the offer");
+    const error = await response.json();
+    return { success: false, message: subscriptionErrors[error?.statusCode] || "Abonnement échoué" };
   }
 
-  return response.json();
+  return { success: true, message: "Abonné avec succès" };
 }
 
 export async function upgradeSubscription(
@@ -123,10 +123,11 @@ export async function upgradeSubscription(
   );
 
   if (!response.ok) {
-    throw new Error("Failed to change offer subscription");
+    const error = await response.json();
+    return { success: false, message: subscriptionErrors[error?.statusCode] || "Changement d'abonnement échoué" };
   }
 
-  return response.json();
+    return { success: true, message: "Abonné avec succès" };
 }
 
 export async function cancelSubscription(
@@ -145,8 +146,9 @@ export async function cancelSubscription(
   );
 
   if (!response.ok) {
-    throw new Error("Failed to unsubscribe");
+    const error = await response.json();
+    return { success: false, message: subscriptionErrors[error?.statusCode] || "Désabonnement échoué" };
   }
 
-  return response.json();
+  return { success: true, message: "Désabonné avec succès" };
 }

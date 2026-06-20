@@ -3,17 +3,17 @@
 import Form from "next/form";
 import { useActionState, useState } from "react";
 import { subscribe } from "@/app/offers/[id]/subscribe/actions";
-import { UserInfo } from "@/types/UserInfo";
+import { User } from "@/types/User";
 
 export default function Page({
   offerId,
   user,
 }: {
   offerId: string;
-  user: UserInfo;
+  user: User;
 }) {
   const [state, action, pending] = useActionState(
-    subscribe.bind(null, { offerId, userId: user.id }),
+    subscribe.bind(null, { offerId, user: user }),
     { errors: {} },
   );
   const [emailValue, setEmailValue] = useState(user.email);
@@ -21,9 +21,9 @@ export default function Page({
   return (
     <>
       <div className="flex flex-col justify-center px-6 py-8 w-auto md:w-2xl">
-        {state.success && (
-          <div className="flex text-center bg-green-500 text-white sm:mx-auto sm:max-w-sm sm:w-full py-4 px-4 rounded-md gap-2">
-            <p>Abonné avec succès</p>
+        {state?.message && (
+          <div className={`flex text-center ${state.success ? 'bg-green-500' : 'bg-red-500'} text-white sm:mx-auto sm:max-w-sm sm:w-full py-4 px-4 rounded-md gap-2`}>
+            <p>{state.message}</p>
           </div>
         )}
 
