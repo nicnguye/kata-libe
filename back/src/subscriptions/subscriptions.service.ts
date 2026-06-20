@@ -20,6 +20,10 @@ export class SubscriptionsService {
     return this.prisma.subscription.findUnique({ where: { id } });
   }
 
+  findOneBy(where: Prisma.SubscriptionWhereInput) {
+    return this.prisma.subscription.findFirst({ where });
+  }
+
   update(id: string, updateSubscriptionDto: Prisma.SubscriptionUpdateInput) {
     return this.prisma.subscription.update({
       where: { id },
