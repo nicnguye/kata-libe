@@ -2,6 +2,8 @@
 
 import Form from "next/form";
 import { useActionState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { register } from "./actions";
 
 export default function RegisterPage() {
@@ -10,8 +12,21 @@ export default function RegisterPage() {
   return (
     <>
       <div className="flex flex-col justify-center px-6 py-8">
+        <div className="flex justify-end items-start mr-2">
+          <Link href="/login">
+            <Image
+              src="/close.png"
+              alt="close"
+              width={14}
+              height={14}
+              className="cursor-pointer"
+            />
+          </Link>
+        </div>
         {state?.message && (
-          <div className={`flex text-center ${state.success ? 'bg-green-500' : 'bg-red-500'} text-white sm:mx-auto sm:max-w-sm sm:w-full py-4 px-4 rounded-md gap-2`}>
+          <div
+            className={`flex text-center ${state.success ? "bg-green-500" : "bg-red-500"} text-white sm:mx-auto sm:max-w-sm sm:w-full py-4 px-4 rounded-md gap-2`}
+          >
             <p>{state.message}</p>
           </div>
         )}

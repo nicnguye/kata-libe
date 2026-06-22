@@ -31,7 +31,7 @@ export default async function SubscriptionChangePage() {
         </div>
         <div className="flex flex-col items-center">
           <h1 className="h-20 text-center text-3xl font-bold text-sky-800">
-            {"L'offre supérieure"}
+            {"L'offre supérieure 🚀"}
           </h1>
           {upgradedOffer.id === subscription.offer.id ? (
             <p>Aucune offre supérieure disponible</p>
