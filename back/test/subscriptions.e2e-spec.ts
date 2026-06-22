@@ -45,8 +45,33 @@ describe('SubscriptionsController (e2e)', () => {
       { secret: process.env.JWT_SECRET, expiresIn: '2m' },
     );
 
-    offerId1 = 'a621b676-e6e0-4281-a2a4-35c0bb1259aa';
-    offerId2 = 'a4409336-e7da-4b10-a30e-dafff549bd48';
+    offerId1 = 'ecc1e932-5646-485c-bc07-adc749a58014';
+    offerId2 = '75844f68-9c39-4993-aba2-4c343d9def46';
+
+    await prisma.offer.createMany({
+      data: [
+        {
+          id: offerId1,
+          title: 'Test Offre 1',
+          description: 'Test Offre 1',
+          price: 10,
+          advantage: 'Test avantage 1',
+          allowFirstSubscription: true,
+          allowResubscription: false,
+          allowUpgrade: false,
+        },
+        {
+          id: offerId2,
+          title: 'Test Offre 2',
+          description: 'Test Offre 2',
+          price: 15,
+          advantage: 'Test avantage 2',
+          allowFirstSubscription: false,
+          allowResubscription: true,
+          allowUpgrade: true,
+        },
+      ],
+    });
 
     await prisma.user.create({
       data: userData,
@@ -54,6 +79,16 @@ describe('SubscriptionsController (e2e)', () => {
   });
 
   describe('POST: /subscriptions', () => {
+    it('should returns ConflictException if offer does not allow first subscription', async () => {
+      await request(app.getHttpServer())
+        .post('/subscriptions')
+        .send({
+          userId: userData.id,
+          offerId: offerId2,
+        })
+        .expect(409);
+    });
+
     it('should returns new subscription', async () => {
       const res = await request(app.getHttpServer())
         .post('/subscriptions')
@@ -146,7 +181,14 @@ describe('SubscriptionsController (e2e)', () => {
         id: userData.id,
       },
     });
-    await prisma.$transaction([deleteSubscription, deleteUser]);
+    const deleteOffers = prisma.offer.deleteMany({
+      where: {
+        id: {
+          in: [offerId1, offerId2],
+        },
+      },
+    });
+    await prisma.$transaction([deleteSubscription, deleteUser, deleteOffers]);
     await prisma.$disconnect();
     await app.close();
   });

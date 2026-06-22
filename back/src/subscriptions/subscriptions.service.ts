@@ -1,11 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Subscription, Prisma } from 'src/generated/prisma/client';
+import {
+  Subscription,
+  Prisma,
+  SubscriptionStatus,
+} from 'src/generated/prisma/client';
 import { ChangeSubscriptionDto } from './dto/change-subscription.dto';
-
+import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import { OffersService } from '../offers/offers.service';
+import { AuthService } from '../auth/auth.service';
 @Injectable()
 export class SubscriptionsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private offersService: OffersService,
+    private authService: AuthService,
+  ) {}
 
   create(
     createSubscriptionDto: Prisma.SubscriptionCreateInput,
@@ -39,6 +53,61 @@ export class SubscriptionsService {
     return this.prisma.subscription.update({
       where: { id },
       data: changeSubscriptionDto,
+    });
+  }
+
+  async validateSubscriptionRules(userId: string, offerId: string) {
+    const [activeSub, offer, user] = await Promise.all([
+      this.findOneBy({ userId, status: 'ACTIVE' }),
+      this.offersService.findOne(offerId),
+      this.authService.getProfile(userId),
+    ]);
+
+    if (!offer) throw new NotFoundException('Offer not found');
+    if (!user) throw new NotFoundException('User not found');
+    if (activeSub) throw new ConflictException('Subscription already exists');
+
+    // Règle : Première souscription
+    const isFirstSubscription = !user.subscription.length;
+    if (isFirstSubscription) {
+      if (!offer.allowFirstSubscription) {
+        throw new ConflictException('Offer does not allow first subscription');
+      }
+      return true;
+    }
+
+    if (!user.subscription.length && offer.allowFirstSubscription) {
+      return true;
+    }
+
+    // Règle : Résouscription
+    if (!offer.allowResubscription) {
+      throw new ConflictException('Offer does not allow resubscription');
+    }
+
+    // Règle : Même offre
+    const lastSub = user.subscription.sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    )[0];
+
+    if (lastSub && lastSub.offerId === offer.id) {
+      throw new ConflictException('User cannot resubscribe to the same offer');
+    }
+
+    return true;
+  }
+
+  async createSubscription(createSubscriptionDto: CreateSubscriptionDto) {
+    await this.validateSubscriptionRules(
+      createSubscriptionDto.userId,
+      createSubscriptionDto.offerId,
+    );
+
+    return this.create({
+      status: SubscriptionStatus.ACTIVE,
+      user: { connect: { id: createSubscriptionDto.userId } },
+      offer: { connect: { id: createSubscriptionDto.offerId } },
     });
   }
 }

@@ -4,6 +4,7 @@ import {
   Body,
   Param,
   ConflictException,
+  NotFoundException,
   UseGuards,
   HttpCode,
   HttpStatus,
@@ -13,6 +14,7 @@ import {
   ApiOkResponse,
   ApiHeader,
   ApiConflictResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
 import { SubscriptionsService } from './subscriptions.service';
@@ -20,48 +22,31 @@ import { SubscriptionExistGuard } from './subscription.guard';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { ChangeSubscriptionDto } from './dto/change-subscription.dto';
 import { SubscriptionResponseDto } from './dto/subscription-response.dto';
-import { SubscriptionStatus } from '../generated/prisma/client';
+import { OffersService } from '../offers/offers.service';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
-  constructor(private readonly subscriptionsService: SubscriptionsService) {}
+  constructor(
+    private readonly subscriptionsService: SubscriptionsService,
+    private readonly offersService: OffersService,
+  ) {}
 
   @ApiCreatedResponse({
     type: SubscriptionResponseDto,
     description: 'Returns the created subscription',
   })
   @ApiConflictResponse({
-    description: 'Subscription already exists',
+    description: 'Offer does not allow first subscription or resubscription',
+  })
+  @ApiNotFoundResponse({
+    description: 'Offer or user not found',
   })
   @HttpCode(HttpStatus.CREATED)
   @Post()
   async create(
     @Body() createSubscriptionDto: CreateSubscriptionDto,
   ): Promise<SubscriptionResponseDto> {
-    const subscription = await this.subscriptionsService.findOneBy({
-      userId: createSubscriptionDto.userId,
-      status: 'ACTIVE',
-    });
-
-    // check if user already has an active subscription
-    if (subscription) {
-      throw new ConflictException('Subscription already exists');
-    }
-
-    const data = {
-      status: SubscriptionStatus.ACTIVE,
-      user: {
-        connect: {
-          id: createSubscriptionDto.userId,
-        },
-      },
-      offer: {
-        connect: {
-          id: createSubscriptionDto.offerId,
-        },
-      },
-    };
-    return this.subscriptionsService.create(data);
+    return this.subscriptionsService.createSubscription(createSubscriptionDto);
   }
 
   @ApiOkResponse({
@@ -89,6 +74,12 @@ export class SubscriptionsController {
     description: "Bearer token d'authentification",
     required: true,
   })
+  @ApiConflictResponse({
+    description: 'Offer does not allow upgrade',
+  })
+  @ApiNotFoundResponse({
+    description: 'Offer not found',
+  })
   @UseGuards(AuthGuard, SubscriptionExistGuard)
   @HttpCode(HttpStatus.OK)
   @Post(':id/change')
@@ -96,6 +87,16 @@ export class SubscriptionsController {
     @Param('id') id: string,
     @Body() changeSubscriptionDto: ChangeSubscriptionDto,
   ): Promise<SubscriptionResponseDto> {
+    const offer = await this.offersService.findOne(
+      changeSubscriptionDto.offerId,
+    );
+    if (!offer) {
+      throw new NotFoundException('Offer not found');
+    }
+
+    if (!offer.allowUpgrade) {
+      throw new ConflictException('Offer does not allow upgrade');
+    }
     return this.subscriptionsService.change(id, changeSubscriptionDto);
   }
 }

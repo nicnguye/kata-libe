@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConflictException } from '@nestjs/common';
 import { SubscriptionsController } from './subscriptions.controller';
 import { SubscriptionsService } from './subscriptions.service';
+import { OffersService } from '../offers/offers.service';
 
 describe('SubscriptionsController', () => {
   const subscriptionsServiceMock = {
@@ -10,10 +11,16 @@ describe('SubscriptionsController', () => {
     create: jest.fn(),
     cancel: jest.fn(),
     change: jest.fn(),
+    createSubscription: jest.fn(),
+  };
+
+  const offersServiceMock = {
+    findOne: jest.fn(),
   };
 
   let subscriptionsController: SubscriptionsController;
   let subscriptionsService: typeof subscriptionsServiceMock;
+  let offersService: typeof offersServiceMock;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +33,7 @@ describe('SubscriptionsController', () => {
             verifySync: jest.fn(),
           },
         },
+        { provide: OffersService, useValue: offersServiceMock },
       ],
     }).compile();
 
@@ -33,6 +41,7 @@ describe('SubscriptionsController', () => {
       SubscriptionsController,
     );
     subscriptionsService = module.get(SubscriptionsService);
+    offersService = module.get(OffersService);
   });
 
   describe('create', () => {
@@ -42,41 +51,43 @@ describe('SubscriptionsController', () => {
         userId: 'uuid2',
       };
 
-      const expectedHydratedData = {
-        status: 'ACTIVE',
-        user: {
-          connect: {
-            id: createSubscriptionFixture.userId,
-          },
-        },
-        offer: {
-          connect: {
-            id: createSubscriptionFixture.offerId,
-          },
-        },
-      };
-      subscriptionsService.findOneBy.mockResolvedValue(null);
+      // const expectedHydratedData = {
+      //   status: 'ACTIVE',
+      //   user: {
+      //     connect: {
+      //       id: createSubscriptionFixture.userId,
+      //     },
+      //   },
+      //   offer: {
+      //     connect: {
+      //       id: createSubscriptionFixture.offerId,
+      //     },
+      //   },
+      // };
+      subscriptionsService.createSubscription.mockResolvedValue(
+        createSubscriptionFixture,
+      );
 
       await subscriptionsController.create(createSubscriptionFixture);
-      expect(subscriptionsService.create).toHaveBeenCalledWith(
-        expectedHydratedData,
+      expect(subscriptionsService.createSubscription).toHaveBeenCalledWith(
+        createSubscriptionFixture,
       );
     });
 
-    it('should throw ConflictException if user already has an active subscription', async () => {
-      const createSubscriptionDto = {
-        offerId: 'uuid1',
-        userId: 'uuid2',
-      };
+    // it('should throw ConflictException if user already has an active subscription', async () => {
+    //   const createSubscriptionDto = {
+    //     offerId: 'uuid1',
+    //     userId: 'uuid2',
+    //   };
 
-      subscriptionsService.findOneBy.mockResolvedValue({
-        status: 'ACTIVE',
-      });
+    //   subscriptionsService.findOneBy.mockResolvedValue({
+    //     status: 'ACTIVE',
+    //   });
 
-      await expect(
-        subscriptionsController.create(createSubscriptionDto),
-      ).rejects.toThrow(ConflictException);
-    });
+    //   await expect(
+    //     subscriptionsController.create(createSubscriptionDto),
+    //   ).rejects.toThrow(ConflictException);
+    // });
   });
 
   describe('cancel', () => {
@@ -93,6 +104,8 @@ describe('SubscriptionsController', () => {
       const changeSubscriptionDto = {
         offerId: 'uuid2',
       };
+
+      offersService.findOne.mockResolvedValue({ allowUpgrade: true });
       await subscriptionsController.change(
         subscriptionId,
         changeSubscriptionDto,
@@ -101,6 +114,18 @@ describe('SubscriptionsController', () => {
         subscriptionId,
         changeSubscriptionDto,
       );
+    });
+
+    it('should throw ConflictException if offer does not allow upgrade', async () => {
+      const subscriptionId = 'uuid1';
+      const changeSubscriptionDto = {
+        offerId: 'uuid2',
+      };
+
+      offersService.findOne.mockResolvedValue({ allowUpgrade: false });
+      await expect(
+        subscriptionsController.change(subscriptionId, changeSubscriptionDto),
+      ).rejects.toThrow(ConflictException);
     });
   });
 });

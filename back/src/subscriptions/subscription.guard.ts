@@ -24,7 +24,6 @@ export class SubscriptionExistGuard implements CanActivate {
     if (!subscription) {
       throw new NotFoundException('Subscription not found');
     }
-
     return true;
   }
 }
