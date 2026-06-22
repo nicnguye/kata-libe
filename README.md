@@ -10,6 +10,13 @@ Go to /back directory -> install dependencies & config .env file -> create postg
 In another terminal:
 Got to /front directory -> install dependencies & config .env file -> run the project;
 
+# Requirements
+
+```bash
+docker-compose;
+node.js;
+```
+
 # Setup back end project first
 
 ### Install dependencies & config .env file
@@ -60,9 +67,14 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-### Documentation
+### Documentation swagger
 
 [http://localhost:3000/api](http://localhost:3000/api)
+
+
+### postgres gui: pgadmin
+
+[http://localhost:5050](http://localhost:5050)
 
 
 # Setup front end project
