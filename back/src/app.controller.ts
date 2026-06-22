@@ -4,12 +4,10 @@ import {
   HealthCheckService,
   HttpHealthIndicator,
 } from '@nestjs/terminus';
-import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
     private readonly health: HealthCheckService,
     private readonly http: HttpHealthIndicator,
   ) {}
@@ -27,7 +25,12 @@ export class AppController {
   }
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getInfo() {
+    return {
+      name: 'API',
+      version: '1.0',
+      docs: '/api',
+      health: '/health',
+    };
   }
 }
