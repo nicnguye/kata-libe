@@ -51,17 +51,15 @@ export class SubscriptionsController {
   }
 
   @ApiOkResponse({ type: SubscriptionResponseDto })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SubscriptionExistGuard)
   @Post(':id/cancel')
-  @UseGuards(SubscriptionExistGuard)
   async cancel(@Param('id') id: string): Promise<SubscriptionResponseDto> {
     return this.subscriptionsService.cancel(id);
   }
 
   @ApiOkResponse({ type: SubscriptionResponseDto })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SubscriptionExistGuard)
   @Post(':id/change')
-  @UseGuards(SubscriptionExistGuard)
   async change(
     @Param('id') id: string,
     @Body() changeSubscriptionDto: ChangeSubscriptionDto,
