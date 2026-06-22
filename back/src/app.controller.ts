@@ -1,9 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiOkResponse } from '@nestjs/swagger';
 import {
   HealthCheck,
   HealthCheckService,
   HttpHealthIndicator,
 } from '@nestjs/terminus';
+import { AppResponseDto } from './app-response.dto';
 
 @Controller()
 export class AppController {
@@ -24,6 +26,7 @@ export class AppController {
     ]);
   }
 
+  @ApiOkResponse({ type: AppResponseDto, description: 'Returns app info' })
   @Get()
   getInfo() {
     return {

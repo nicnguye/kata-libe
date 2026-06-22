@@ -1,5 +1,5 @@
 import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiNotFoundResponse } from '@nestjs/swagger';
 import { OffersService } from './offers.service';
 import { OfferResponseDto } from './dto/offer-response.dto';
 
@@ -7,13 +7,17 @@ import { OfferResponseDto } from './dto/offer-response.dto';
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
 
-  @ApiOkResponse({ type: OfferResponseDto })
+  @ApiOkResponse({
+    type: OfferResponseDto,
+    description: 'Return an array of offers',
+  })
   @Get()
   findAll() {
     return this.offersService.findAll();
   }
 
-  @ApiOkResponse({ type: OfferResponseDto })
+  @ApiOkResponse({ type: OfferResponseDto, description: 'Return an offer' })
+  @ApiNotFoundResponse({ description: 'Offer not found' })
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const offer = await this.offersService.findOne(id);

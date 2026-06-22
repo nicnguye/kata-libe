@@ -5,8 +5,15 @@ import {
   Param,
   ConflictException,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiHeader,
+  ApiConflictResponse,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
 import { SubscriptionsService } from './subscriptions.service';
 import { SubscriptionExistGuard } from './subscription.guard';
@@ -19,7 +26,14 @@ import { SubscriptionStatus } from '../generated/prisma/client';
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
-  @ApiOkResponse({ type: SubscriptionResponseDto })
+  @ApiCreatedResponse({
+    type: SubscriptionResponseDto,
+    description: 'Returns the created subscription',
+  })
+  @ApiConflictResponse({
+    description: 'Subscription already exists',
+  })
+  @HttpCode(HttpStatus.CREATED)
   @Post()
   async create(
     @Body() createSubscriptionDto: CreateSubscriptionDto,
@@ -50,15 +64,33 @@ export class SubscriptionsController {
     return this.subscriptionsService.create(data);
   }
 
-  @ApiOkResponse({ type: SubscriptionResponseDto })
+  @ApiOkResponse({
+    type: SubscriptionResponseDto,
+    description: 'Returns the cancelled subscription',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: "Bearer token d'authentification",
+    required: true,
+  })
   @UseGuards(AuthGuard, SubscriptionExistGuard)
+  @HttpCode(HttpStatus.OK)
   @Post(':id/cancel')
   async cancel(@Param('id') id: string): Promise<SubscriptionResponseDto> {
     return this.subscriptionsService.cancel(id);
   }
 
-  @ApiOkResponse({ type: SubscriptionResponseDto })
+  @ApiOkResponse({
+    type: SubscriptionResponseDto,
+    description: 'Returns the updated subscription',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: "Bearer token d'authentification",
+    required: true,
+  })
   @UseGuards(AuthGuard, SubscriptionExistGuard)
+  @HttpCode(HttpStatus.OK)
   @Post(':id/change')
   async change(
     @Param('id') id: string,

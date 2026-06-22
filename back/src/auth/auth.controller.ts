@@ -9,23 +9,44 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
-import { ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiHeader,
+  ApiNotFoundResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { ProfileAuthResponseDto } from './dto/profile-auth-response.dto';
+import { LoginAuthResponseDto } from './dto/login-auth-response.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    type: LoginAuthResponseDto,
+    description: 'Returns login access token',
+  })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
   @Post('login')
   login(@Body() loginDto: LoginAuthDto) {
     return this.authService.login(loginDto.email, loginDto.password);
   }
 
-  @ApiOkResponse({ type: ProfileAuthResponseDto })
+  @ApiOkResponse({
+    type: ProfileAuthResponseDto,
+    description: 'Returns user profile',
+  })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: "Bearer token d'authentification",
+    required: true,
+  })
   @UseGuards(AuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {

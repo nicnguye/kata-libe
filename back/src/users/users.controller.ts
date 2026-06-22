@@ -1,6 +1,6 @@
 import { Controller, Post, Body, ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiConflictResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -9,7 +9,13 @@ import { UserResponseDto } from './dto/user-response.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @ApiOkResponse({ type: UserResponseDto })
+  @ApiCreatedResponse({
+    type: UserResponseDto,
+    description: 'Returns user created',
+  })
+  @ApiConflictResponse({
+    description: 'User email already exists',
+  })
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.usersService.findOneBy({
