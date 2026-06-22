@@ -13,7 +13,7 @@ import { SubscriptionExistGuard } from './subscription.guard';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { ChangeSubscriptionDto } from './dto/change-subscription.dto';
 import { SubscriptionResponseDto } from './dto/subscription-response.dto';
-import { SubscriptionStatus } from 'src/generated/prisma/client';
+import { SubscriptionStatus } from '../generated/prisma/client';
 
 @Controller('subscriptions')
 export class SubscriptionsController {

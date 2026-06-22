@@ -37,46 +37,46 @@ describe('AuthController', () => {
   describe('login', () => {
     it('should call authService.login with email and password', async () => {
       authService.login.mockResolvedValue({ accessToken: 'token' });
-      const testData = { email: 'email@test.com', password: 'password' };
+      const authFixture = { email: 'email@test.com', password: 'password' };
 
       await authController.login({
-        email: testData.email,
-        password: testData.password,
+        email: authFixture.email,
+        password: authFixture.password,
       });
 
       expect(authService.login).toHaveBeenCalledWith(
-        testData.email,
-        testData.password,
+        authFixture.email,
+        authFixture.password,
       );
     });
   });
 
   describe('getProfile', () => {
     it('should throw UnauthorizedException if no user in request', async () => {
-      await expect(authController.getProfile({} as any)).rejects.toThrow(
+      await expect(authController.getProfile({})).rejects.toThrow(
         UnauthorizedException,
       );
     });
   });
 
   it('should throw UnauthorizedException if user has no id', async () => {
-    const req = {
+    const reqFixture = {
       user: {},
     };
 
-    await expect(authController.getProfile(req as any)).rejects.toThrow(
+    await expect(authController.getProfile(reqFixture)).rejects.toThrow(
       UnauthorizedException,
     );
   });
 
   it('should call authService.getProfile with userId', async () => {
-    const req = {
+    const reqFixture = {
       user: { id: 'user1' },
     };
 
-    authService.getProfile.mockResolvedValue({} as any);
+    authService.getProfile.mockResolvedValue({});
 
-    await authController.getProfile(req as any);
+    await authController.getProfile(reqFixture);
 
     expect(authService.getProfile).toHaveBeenCalledWith('user1');
   });

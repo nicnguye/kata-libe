@@ -37,7 +37,7 @@ describe('SubscriptionsController', () => {
 
   describe('create', () => {
     it('should call subscriptionsService.create', async () => {
-      const createSubscriptionDto = {
+      const createSubscriptionFixture = {
         offerId: 'uuid1',
         userId: 'uuid2',
       };
@@ -46,18 +46,18 @@ describe('SubscriptionsController', () => {
         status: 'ACTIVE',
         user: {
           connect: {
-            id: createSubscriptionDto.userId,
+            id: createSubscriptionFixture.userId,
           },
         },
         offer: {
           connect: {
-            id: createSubscriptionDto.offerId,
+            id: createSubscriptionFixture.offerId,
           },
         },
       };
       subscriptionsService.findOneBy.mockResolvedValue(null);
 
-      await subscriptionsController.create(createSubscriptionDto);
+      await subscriptionsController.create(createSubscriptionFixture);
       expect(subscriptionsService.create).toHaveBeenCalledWith(
         expectedHydratedData,
       );

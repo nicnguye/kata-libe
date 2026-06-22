@@ -18,7 +18,7 @@ export class AppController {
     return this.health.check([
       () =>
         this.http.pingCheck(
-          'basic check',
+          'kata libe',
           `http://localhost:${process.env.PORT}`,
         ),
     ]);

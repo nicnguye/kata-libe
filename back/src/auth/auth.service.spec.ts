@@ -51,8 +51,8 @@ describe('AuthService', () => {
       });
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      const expectedPayload = { sub: 'userId', email: 'email' };
       const token = 'accessToken';
+      const expectedPayload = { sub: 'userId', email: 'email' };
       jwtService.signAsync.mockResolvedValue(token);
 
       const result = await authService.login('email', 'password');

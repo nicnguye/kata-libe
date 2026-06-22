@@ -34,7 +34,7 @@ describe('UsersController', () => {
 
   describe('create', () => {
     it('should call usersService.create and return the created user', async () => {
-      const createUserDto = {
+      const createUserFixture = {
         firstName: 'Jean',
         lastName: 'Reno',
         gender: 'Male',
@@ -46,36 +46,36 @@ describe('UsersController', () => {
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
 
       const expectedHydratedData = {
-        firstName: createUserDto.firstName,
-        lastName: createUserDto.lastName,
-        gender: createUserDto.gender,
-        age: createUserDto.age,
-        email: createUserDto.email,
+        firstName: createUserFixture.firstName,
+        lastName: createUserFixture.lastName,
+        gender: createUserFixture.gender,
+        age: createUserFixture.age,
+        email: createUserFixture.email,
         password: 'hashedPassword',
       };
 
       const expectedUser = {
         id: 'userId',
-        firstName: createUserDto.firstName,
-        lastName: createUserDto.lastName,
-        gender: createUserDto.gender,
-        age: createUserDto.age,
-        email: createUserDto.email,
+        firstName: createUserFixture.firstName,
+        lastName: createUserFixture.lastName,
+        gender: createUserFixture.gender,
+        age: createUserFixture.age,
+        email: createUserFixture.email,
       };
       usersService.create.mockResolvedValue(expectedUser);
 
-      const result = await usersController.create(createUserDto);
+      const result = await usersController.create(createUserFixture);
 
       expect(usersService.findOneBy).toHaveBeenCalledWith({
-        email: createUserDto.email,
+        email: createUserFixture.email,
       });
-      expect(bcrypt.hash).toHaveBeenCalledWith(createUserDto.password, 10);
+      expect(bcrypt.hash).toHaveBeenCalledWith(createUserFixture.password, 10);
       expect(usersService.create).toHaveBeenCalledWith(expectedHydratedData);
       expect(result).toEqual(expectedUser);
     });
 
     it('should throw ConflictException if user already exists', async () => {
-      const createUserDto = {
+      const createUserFixture = {
         firstName: 'Jean',
         lastName: 'Reno',
         gender: 'Male',
@@ -85,7 +85,7 @@ describe('UsersController', () => {
       };
       usersService.findOneBy.mockResolvedValue({ id: 'userId' });
 
-      await expect(usersController.create(createUserDto)).rejects.toThrow(
+      await expect(usersController.create(createUserFixture)).rejects.toThrow(
         ConflictException,
       );
     });
